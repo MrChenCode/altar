@@ -10,16 +10,16 @@ type Model struct {
 	Book *model.BookModel
 }
 
-func NewModel(rcx *context.RequestContext) *Model {
+func NewModel() *Model {
 	m := &Model{
-		rcx: rcx,
+		rcx: &context.RequestContext{},
 	}
-	m.Book = &model.BookModel{RequestContext: m.rcx}
+	m.Book = &model.BookModel{RequestContext: m.rcx, Game: &model.GameModel{m.rcx}}
 	return m
 }
 
 func (m *Model) Reset(rcx *context.RequestContext) {
-	m.rcx = rcx
+	*m.rcx = *rcx
 }
 
 //反射扫描是否存在初始化model函数Init

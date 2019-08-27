@@ -8,16 +8,10 @@ import (
 	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/context"
 	"gitlab.baidu-shucheng.com/shaohua/bloc/logger"
 	"io"
-	"net/http"
 	"path/filepath"
-
-	_ "net/http/pprof"
 )
 
 func main() {
-	go func(){
-		http.ListenAndServe("10.3.134.199:9999", nil)
-	}()
 	//var mds bool
 	//flag.BoolVar(&mds, "mds", false, "mds running...")
 	//flag.Parse()
@@ -51,5 +45,5 @@ func main() {
 	r.Use(gin.Recovery())
 
 	cores.Router(r)
-	r.Run("10.3.134.199:8888")
+	r.Run(":8888")
 }

@@ -49,10 +49,11 @@ func mysqlLogWF(query string, err error, d time.Duration) {
 		return
 	}
 	if err != nil {
-		mysqlwf.Errorw(err.Error(), "device", "mysql", "query", query, "usetime", d.Seconds())
+		mysqlwf.Errorw("", "msg", err.Error(), "device", "mysql", "query", query, "usetime", d.Seconds())
 	} else {
-		mysqlwf.Warnw("slow", "device", "mysql", "query", query, "usetime", d.Seconds())
+		mysqlwf.Warnw("", "msg", "slow", "device", "mysql", "query", query, "usetime", d.Seconds())
 	}
+
 }
 
 func queryResult(rows *sql.Rows, irow bool) ([]map[string]string, error) {

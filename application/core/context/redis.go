@@ -28,6 +28,10 @@ func (r *Redis) execRedisCmd(oldProcess func(cmd redis.Cmder) error) func(cmd re
 		start := time.Now()
 		err := oldProcess(cmd)
 		usetime := time.Now().Sub(start)
+		//如果err == redis.Nil, 认为是查找的key不存在，不认为是错误
+		if err == redis.Nil {
+			err = nil
+		}
 		if err != nil || usetime > RedisExecTimeout {
 			cmdinfo := cmd.Name()
 			for _, c := range cmd.Args() {
@@ -35,9 +39,9 @@ func (r *Redis) execRedisCmd(oldProcess func(cmd redis.Cmder) error) func(cmd re
 				cmdinfo += fmt.Sprint(c)
 			}
 			if err != nil {
-				r.logwf.Errorw(err.Error(), "device", "redis", "query", cmdinfo, "usetime", usetime)
+				r.logwf.Errorw("", "msg", err.Error(), "device", "redis", "query", cmdinfo, "usetime", usetime)
 			} else {
-				r.logwf.Warnw("slow", "device", "redis", "query", cmdinfo, "usetime", usetime)
+				r.logwf.Warnw("", "msg", "slow", "device", "redis", "query", cmdinfo, "usetime", usetime)
 			}
 		}
 		return err

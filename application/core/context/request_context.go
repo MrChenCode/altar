@@ -33,35 +33,41 @@ type RequestContext struct {
 	//公共上下行
 	G *g
 
+	//log
+	Log *log
+}
+
+type log struct {
 	//暂存log数据
 	infoKV  []interface{}
 	errorKV []interface{}
 }
 
-func (rcx *RequestContext) Loginfo(k, v interface{}) {
-	if rcx.infoKV == nil {
-		rcx.infoKV = make([]interface{}, 0, LoggerInfoBufferCap)
+func (l *log) Info(kvs ...interface{}) {
+	if l.infoKV == nil {
+		l.infoKV = make([]interface{}, 0, LoggerInfoBufferCap)
 	}
-	rcx.infoKV = append(rcx.infoKV, k, v)
+	l.infoKV = append(l.infoKV, kvs...)
 }
 
-func (rcx *RequestContext) ErrorInfo(k, v interface{}) {
-	if rcx.errorKV == nil {
-		rcx.errorKV = make([]interface{}, 0, LoggerErrorBufferCap)
+func (l *log) Error(kvs ...interface{}) {
+	if l.errorKV == nil {
+		l.errorKV = make([]interface{}, 0, LoggerErrorBufferCap)
 	}
-	rcx.errorKV = append(rcx.errorKV, k, v)
+	l.errorKV = append(l.errorKV, kvs...)
 }
 
 func (rcx *RequestContext) GetLog() (*[]interface{}, *[]interface{}) {
-	return &rcx.infoKV, &rcx.errorKV
+	return &rcx.Log.infoKV, &rcx.Log.errorKV
 }
 
 //初始化
 func (rcx *RequestContext) Reset(ginctx *gin.Context) {
-	rcx.infoKV = nil
-	rcx.errorKV = nil
-
-
+	if rcx.Log == nil {
+		rcx.Log = &log{}
+	}
+	rcx.Log.errorKV = nil
+	rcx.Log.infoKV = nil
 
 	//初始化G公共上行
 	greq := gpool.Get().(*g)

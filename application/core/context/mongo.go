@@ -30,9 +30,9 @@ func mongoTimeoutCtx() context.Context {
 
 //记录wf日志
 func (m *mongodb) logwf(err error, d time.Duration, colname, exectype string, filter interface{}) {
-
 	if err != nil {
-		mysqlwf.Errorw(err.Error(),
+		mysqlwf.Errorw("",
+			"msg", err.Error(),
 			"device", "mongo",
 			"colname", colname,
 			"exectype", exectype,
@@ -40,7 +40,8 @@ func (m *mongodb) logwf(err error, d time.Duration, colname, exectype string, fi
 			"filter", fmt.Sprint(filter),
 		)
 	} else {
-		mysqlwf.Warnw("slow",
+		mysqlwf.Warnw("",
+			"msg", "slow",
 			"device", "mongo",
 			"colname", colname,
 			"usetime", d.Seconds(),

@@ -6,8 +6,11 @@ import (
 
 type BookModel struct {
 	*context.RequestContext
+	Game *GameModel
 }
 
 func (b *BookModel) GetBookInfo() string {
-	return "abc"
+	b.Log.Info("bookid", 75699, "bookname", "星辰变")
+	b.Log.Error("res", "无效的bookid", "response", "timeout")
+	return b.Game.GetGameInfo()
 }
