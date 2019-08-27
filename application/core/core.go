@@ -3,28 +3,30 @@ package core
 import (
 	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/basic"
 	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/context"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/logger"
 	"sync"
 )
 
 type Core struct {
-	ctx    *context.BasicContext
-	model  *basic.Model
-	logger *logger.Logger
-	pool   sync.Pool
+	ctx *context.BasicContext
+	//model          *basic.Model
+	controllerPool sync.Pool
+	modelPool      sync.Pool
+	libraryPool    sync.Pool
 }
 
 func NewCore(ctx *context.BasicContext) *Core {
 	core := &Core{
-		ctx:    ctx,
-		logger: ctx.Logger,
-		model:  basic.NewModel(ctx),
+		ctx: ctx,
+		//model:  basic.NewModel(ctx),
 	}
-	core.pool.New = func() interface{} {
+	core.controllerPool.New = func() interface{} {
 		return &basic.Controller{
-			BasicContext: core.ctx,
-			Model:        core.model,
+			RequestContext: &context.RequestContext{BasicContext: core.ctx},
 		}
+	}
+	var emptyRequestContext = &context.RequestContext{}
+	core.modelPool.New = func() interface{} {
+		return basic.NewModel(emptyRequestContext)
 	}
 
 	return core

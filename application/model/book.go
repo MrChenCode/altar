@@ -5,9 +5,9 @@ import (
 )
 
 type BookModel struct {
-	*context.BasicContext
+	*context.RequestContext
 }
 
 func (b *BookModel) GetBookInfo() string {
-	return "abcd"
+	return "abc"
 }

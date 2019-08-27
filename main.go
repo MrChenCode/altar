@@ -8,10 +8,16 @@ import (
 	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/context"
 	"gitlab.baidu-shucheng.com/shaohua/bloc/logger"
 	"io"
+	"net/http"
 	"path/filepath"
+
+	_ "net/http/pprof"
 )
 
 func main() {
+	go func(){
+		http.ListenAndServe("10.3.134.199:9999", nil)
+	}()
 	//var mds bool
 	//flag.BoolVar(&mds, "mds", false, "mds running...")
 	//flag.Parse()
@@ -30,11 +36,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	ctx := &context.BasicContext{
-		Config:   c,
-		Logger:   log,
-		Loggerwf: logwf,
-	}
+	ctx := context.NewBasicController(c, log, logwf)
 
 	if err := ctx.Init(); err != nil {
 		panic(err)
@@ -46,8 +48,8 @@ func main() {
 	gin.DisableConsoleColor()
 
 	r := gin.New()
-	r.Use(cores.GinLogger(), gin.Recovery())
+	r.Use(gin.Recovery())
 
 	cores.Router(r)
-	r.Run(":8888")
+	r.Run("10.3.134.199:8888")
 }
