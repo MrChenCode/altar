@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
-	"sync"
 	"sync/atomic"
 	"time"
 )
@@ -15,15 +14,8 @@ const (
 )
 
 var (
-	gpool   sync.Pool
 	idIndex int64
 )
-
-func init() {
-	gpool.New = func() interface{} {
-		return &g{}
-	}
-}
 
 //每次请求的上下文
 type RequestContext struct {
@@ -70,13 +62,16 @@ func (rcx *RequestContext) Reset(ginctx *gin.Context) {
 	rcx.Log.infoKV = nil
 
 	//初始化G公共上行
-	greq := gpool.Get().(*g)
-	rcx.G = greq
+	if rcx.G == nil {
+		rcx.G = &g{}
+	} else {
+		rcx.G.reset()
+	}
 
 	//初始化__id
-	greq.RequestID = ginctx.Query("__id")
-	if greq.RequestID == "" {
-		greq.RequestID = getId()
+	rcx.G.RequestID = ginctx.Query("__id")
+	if rcx.G.RequestID == "" {
+		rcx.G.RequestID = getId()
 	}
 
 	var k string
@@ -85,50 +80,59 @@ func (rcx *RequestContext) Reset(ginctx *gin.Context) {
 		v := ginctx.Query(k)
 		switch i {
 		case 1:
-			greq.P1 = v
+			rcx.G.P1 = v
 		case 2:
-			greq.P2 = v
+			rcx.G.P2 = v
 		case 3:
-			greq.P3 = v
+			rcx.G.P3 = v
 		case 4:
-			greq.P4 = v
+			rcx.G.P4 = v
 		case 5:
-			greq.P5 = v
+			rcx.G.P5 = v
 		case 6:
-			greq.P6 = v
+			rcx.G.P6 = v
 		case 7:
-			greq.P7 = v
+			rcx.G.P7 = v
 		case 8:
-			greq.P8 = v
+			rcx.G.P8 = v
 		case 9:
-			greq.P9 = v
+			rcx.G.P9 = v
 		case 10:
-			greq.P10 = v
+			rcx.G.P10 = v
 		case 11:
-			greq.P11, _ = strconv.Atoi(v)
+			rcx.G.P11, _ = strconv.Atoi(v)
 		case 12:
-			greq.P12, _ = strconv.Atoi(v)
+			rcx.G.P12, _ = strconv.Atoi(v)
 		case 13:
-			greq.P13, _ = strconv.Atoi(v)
+			rcx.G.P13, _ = strconv.Atoi(v)
 		case 14:
-			greq.P14, _ = strconv.Atoi(v)
+			rcx.G.P14, _ = strconv.Atoi(v)
 		case 15:
-			greq.P15 = v
+			rcx.G.P15 = v
 		case 16:
-			greq.P16 = v
+			rcx.G.P16 = v
 		case 17:
-			greq.P17 = v
+			rcx.G.P17 = v
 		case 18:
-			greq.P18 = v
+			rcx.G.P18 = v
 		case 19:
 			if v == "1" {
-				greq.P19 = true
+				rcx.G.P19 = true
 			}
 		case 20:
-			greq.P20 = v
+			rcx.G.P20 = v
 		}
 	}
 
+}
+
+func (a *g) reset() {
+	a.RequestID = ""
+	a.P1, a.P2, a.P3, a.P4, a.P5 = "", "", "", "", ""
+	a.P6, a.P7, a.P8, a.P9, a.P10 = "", "", "", "", ""
+	a.P11, a.P12, a.P13, a.P14 = 0, 0, 0, 0
+	a.P15, a.P16, a.P17, a.P18 = "", "", "", ""
+	a.P19, a.P20 = false, ""
 }
 
 //请求公共上下行解析
