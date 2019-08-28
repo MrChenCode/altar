@@ -34,22 +34,24 @@ func (core *Core) handle(handler HandlerFunc) gin.HandlerFunc {
 		handler(c)
 
 		infokv, errkv := c.GetLog()
+		requestID := c.G.RequestID
+
 		core.controllerPool.Put(c)
 
 		latency := time.Now().Sub(start)
 
 		infokv = append([]interface{}{
-			"method", c.Request.Method,
-			"httpcode", c.Writer.Status(),
-			"path", c.Request.URL.Path,
-			"rawquery", c.Request.URL.RawQuery,
-			"http_errinfo", c.Errors.ByType(gin.ErrorTypePrivate).String(),
+			"method", ginctx.Request.Method,
+			"httpcode", ginctx.Writer.Status(),
+			"path", ginctx.Request.URL.Path,
+			"rawquery", ginctx.Request.URL.RawQuery,
+			"http_errinfo", ginctx.Errors.ByType(gin.ErrorTypePrivate).String(),
 			"request_time", latency.Seconds(),
 		}, infokv...)
 
-		c.WriteLogInfo(c.G.RequestID, infokv...)
+		c.WriteLogInfo(requestID, infokv...)
 		if errkv != nil {
-			c.WriteLogError(c.G.RequestID, errkv...)
+			c.WriteLogError(requestID, errkv...)
 		}
 	}
 }
