@@ -49,8 +49,8 @@ func (l *log) Error(kvs ...interface{}) {
 	l.errorKV = append(l.errorKV, kvs...)
 }
 
-func (rcx *RequestContext) GetLog() (*[]interface{}, *[]interface{}) {
-	return &rcx.Log.infoKV, &rcx.Log.errorKV
+func (rcx *RequestContext) GetLog() ([]interface{}, []interface{}) {
+	return rcx.Log.infoKV, rcx.Log.errorKV
 }
 
 //初始化
