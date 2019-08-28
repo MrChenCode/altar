@@ -1,8 +1,8 @@
 package controller
 
 import (
+	"altar/application/core/basic"
 	"github.com/gin-gonic/gin"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/basic"
 )
 
 type Book struct{}

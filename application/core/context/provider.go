@@ -1,14 +1,14 @@
 package context
 
 import (
+	"altar/application/core/config"
+	"altar/logger"
 	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis"
 	_ "github.com/go-sql-driver/mysql"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/config"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/logger"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readconcern"

@@ -1,12 +1,12 @@
 package main
 
 import (
+	"altar/application/core"
+	"altar/application/core/config"
+	"altar/application/core/context"
+	"altar/logger"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/config"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/context"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/logger"
 	"io"
 	"path/filepath"
 )

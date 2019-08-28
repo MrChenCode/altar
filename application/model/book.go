@@ -1,7 +1,7 @@
 package model
 
 import (
-	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/context"
+	"altar/application/core/context"
 )
 
 type BookModel struct {

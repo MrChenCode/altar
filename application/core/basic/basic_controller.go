@@ -1,8 +1,8 @@
 package basic
 
 import (
+	"altar/application/core/context"
 	"github.com/gin-gonic/gin"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/context"
 )
 
 type Controller struct {

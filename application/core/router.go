@@ -1,9 +1,9 @@
 package core
 
 import (
+	"altar/application/controller"
+	"altar/application/core/basic"
 	"github.com/gin-gonic/gin"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/application/controller"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/basic"
 	"time"
 )
 
@@ -26,7 +26,6 @@ func (core *Core) handle(handler HandlerFunc) gin.HandlerFunc {
 		c.Reset(ginctx)
 
 		//初始化model
-		c.Model = core.modelPool.Get().(*basic.Model)
 		c.Model.Reset(c.RequestContext)
 
 		//执行具体方法

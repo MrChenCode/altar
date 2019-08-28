@@ -1,8 +1,8 @@
 package core
 
 import (
-	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/basic"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/context"
+	"altar/application/core/basic"
+	"altar/application/core/context"
 	"sync"
 )
 
@@ -10,7 +10,6 @@ type Core struct {
 	ctx *context.BasicContext
 
 	controllerPool sync.Pool
-	modelPool      sync.Pool
 }
 
 func NewCore(ctx *context.BasicContext) *Core {
@@ -22,10 +21,8 @@ func NewCore(ctx *context.BasicContext) *Core {
 			RequestContext: &context.RequestContext{
 				BasicContext: core.ctx,
 			},
+			Model: basic.NewModel(),
 		}
-	}
-	core.modelPool.New = func() interface{} {
-		return basic.NewModel()
 	}
 
 	return core

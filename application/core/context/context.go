@@ -1,8 +1,8 @@
 package context
 
 import (
-	"gitlab.baidu-shucheng.com/shaohua/bloc/application/core/config"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/logger"
+	"altar/application/core/config"
+	"altar/logger"
 	"sync"
 )
 

@@ -1,9 +1,9 @@
 package context
 
 import (
+	"altar/logger"
 	"fmt"
 	"github.com/go-redis/redis"
-	"gitlab.baidu-shucheng.com/shaohua/bloc/logger"
 	"time"
 )
 

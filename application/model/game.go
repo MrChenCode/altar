@@ -1,6 +1,6 @@
 package model
 
-import "gitlab.baidu-shucheng.com/shaohua/bloc/application/core/context"
+import "altar/application/core/context"
 
 type GameModel struct {
 	*context.RequestContext

@@ -1,4 +1,4 @@
-module gitlab.baidu-shucheng.com/shaohua/bloc
+module altar
 
 go 1.12
 
