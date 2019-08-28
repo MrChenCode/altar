@@ -14,6 +14,11 @@ Windows: https://dl.google.com/go/go1.12.9.windows-amd64.msi
 
 源码：https://dl.google.com/go/go1.12.9.src.tar.gz  
 
+更新版本请移步至：  
+
+golang官网：https://golang.org/dl/  
+谷歌国内镜像: https://golang.google.cn/dl/  
+
 
 ## 设置环境
 
