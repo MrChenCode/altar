@@ -11,8 +11,10 @@ type HandlerFunc func(*basic.Controller)
 
 func (core *Core) Router(engine *gin.Engine) {
 	book := &controller.Book{}
+	game := &controller.Game{}
 
 	engine.GET("/bookinfo", core.handle(book.BookInfo))
+	engine.GET("/gameinfo", core.handle(game.GameInfo))
 }
 
 func (core *Core) handle(handler HandlerFunc) gin.HandlerFunc {

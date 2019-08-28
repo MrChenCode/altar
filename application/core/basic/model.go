@@ -8,13 +8,16 @@ import (
 type Model struct {
 	rcx  *context.RequestContext
 	Book *model.BookModel
+	Game *model.GameModel
 }
 
 func NewModel() *Model {
 	m := &Model{
 		rcx: &context.RequestContext{},
 	}
-	m.Book = &model.BookModel{RequestContext: m.rcx, Game: &model.GameModel{m.rcx}}
+	m.Book = &model.BookModel{RequestContext: m.rcx}
+	m.Game = &model.GameModel{RequestContext: m.rcx}
+
 	return m
 }
 

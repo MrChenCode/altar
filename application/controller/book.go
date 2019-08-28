@@ -8,9 +8,9 @@ import (
 type Book struct{}
 
 func (_ *Book) BookInfo(ctx *basic.Controller) {
-	ctx.Log.Info("get_bookid", 75699, "get_bookname", "吞噬星空")
+	ctx.Log.Info("controller_bookid", 8000, "controller_bookname", "盘龙")
 	ctx.Log.Error("http_get_error", "无效的bookname")
-	ctx.Log.Info("method", "PPP")
+	ctx.Log.Info("controller_getmodel", 1)
 	ctx.JSON(200, gin.H{
 		"code": 0,
 		"msg":  ctx.Model.Book.GetBookInfo(),
