@@ -1,7 +1,7 @@
 package context
 
 import (
-	"altar/application/core/config"
+	"altar/application/config"
 	"altar/logger"
 	"context"
 	"database/sql"

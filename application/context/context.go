@@ -1,13 +1,13 @@
 package context
 
 import (
-	"altar/application/core/config"
+	"altar/application/config"
 	"altar/logger"
 	"sync"
 )
 
 //基础上下文资源，服务启动期间，仅初始化一次
-type BasicContext struct {
+type Context struct {
 	Config *config.Config
 
 	Mysql *MysqlClient
@@ -18,24 +18,24 @@ type BasicContext struct {
 	logwf   *logger.Logger
 }
 
-func NewBasicController(c *config.Config, log, logwf *logger.Logger) *BasicContext {
-	return &BasicContext{Config: c, loginfo: log, logwf: logwf}
+func NewController(c *config.Config, log, logwf *logger.Logger) *Context {
+	return &Context{Config: c, loginfo: log, logwf: logwf}
 }
 
-func (ctx *BasicContext) WriteLogInfo(id string, kvs ...interface{}) {
+func (ctx *Context) WriteLogInfo(id string, kvs ...interface{}) {
 	ctx.loginfo.Infow(id, kvs...)
 }
 
-func (ctx *BasicContext) WriteLogError(id string, kvs ...interface{}) {
+func (ctx *Context) WriteLogError(id string, kvs ...interface{}) {
 	ctx.logwf.Errorw(id, kvs...)
 }
 
-func (ctx *BasicContext) LogSync() {
+func (ctx *Context) LogSync() {
 	_ = ctx.loginfo.Sync()
 	_ = ctx.logwf.Sync()
 }
 
-func (ctx *BasicContext) Init() error {
+func (ctx *Context) Init() error {
 	if ctx.Config == nil {
 		panic("Invalid config")
 	}

@@ -1,12 +1,11 @@
 package main
 
 import (
-	"altar/application/core"
-	"altar/application/core/config"
-	"altar/application/core/context"
+	"altar/application/config"
+	"altar/application/context"
+	"altar/application/router"
 	"altar/logger"
 	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
 	"io"
 	"path/filepath"
 )
@@ -30,20 +29,20 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	ctx := context.NewBasicController(c, log, logwf)
+	ctx := context.NewController(c, log, logwf)
 
 	if err := ctx.Init(); err != nil {
 		panic(err)
 	}
 
-	cores := core.NewCore(ctx)
+	r := router.NewRouter(ctx)
 
 	gin.SetMode(gin.ReleaseMode)
 	gin.DisableConsoleColor()
 
-	r := gin.New()
-	r.Use(gin.Recovery())
+	e := gin.New()
+	e.Use(gin.Recovery())
 
-	cores.Router(r)
-	r.Run(":8888")
+	r.Router(e)
+	_ = e.Run(":8888")
 }

@@ -1,11 +1,7 @@
 package model
 
-import (
-	"altar/application/core/context"
-)
-
 type BookModel struct {
-	*context.RequestContext
+	*Model
 }
 
 func (b *BookModel) GetBookInfo() string {

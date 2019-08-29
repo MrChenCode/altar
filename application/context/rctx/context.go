@@ -1,6 +1,9 @@
-package context
+//每次请求时，使用的上下文，他应该是一个对象池
+
+package rctx
 
 import (
+	"altar/application/context"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
@@ -8,19 +11,14 @@ import (
 	"time"
 )
 
-const (
-	LoggerInfoBufferCap  = 20
-	LoggerErrorBufferCap = 4
-)
-
 var (
 	idIndex int64
 )
 
-//每次请求的上下文
+//每次请求的上下文, 每一个http请求，都是不一样的上下文对象
 type RequestContext struct {
 	//基础上下文
-	*BasicContext
+	*context.Context
 
 	//公共上下行
 	G *g
@@ -29,26 +27,7 @@ type RequestContext struct {
 	Log *log
 }
 
-type log struct {
-	//暂存log数据
-	infoKV  []interface{}
-	errorKV []interface{}
-}
-
-func (l *log) Info(kvs ...interface{}) {
-	if l.infoKV == nil {
-		l.infoKV = make([]interface{}, 0, LoggerInfoBufferCap)
-	}
-	l.infoKV = append(l.infoKV, kvs...)
-}
-
-func (l *log) Error(kvs ...interface{}) {
-	if l.errorKV == nil {
-		l.errorKV = make([]interface{}, 0, LoggerErrorBufferCap)
-	}
-	l.errorKV = append(l.errorKV, kvs...)
-}
-
+//获取缓冲的日志数据(k-v)
 func (rcx *RequestContext) GetLog() ([]interface{}, []interface{}) {
 	return rcx.Log.infoKV, rcx.Log.errorKV
 }
@@ -57,9 +36,9 @@ func (rcx *RequestContext) GetLog() ([]interface{}, []interface{}) {
 func (rcx *RequestContext) Reset(ginctx *gin.Context) {
 	if rcx.Log == nil {
 		rcx.Log = &log{}
+	} else {
+		rcx.Log.reset()
 	}
-	rcx.Log.errorKV = nil
-	rcx.Log.infoKV = nil
 
 	//初始化G公共上行
 	if rcx.G == nil {
@@ -123,31 +102,6 @@ func (rcx *RequestContext) Reset(ginctx *gin.Context) {
 			rcx.G.P20 = v
 		}
 	}
-
-}
-
-func (a *g) reset() {
-	a.RequestID = ""
-	a.P1, a.P2, a.P3, a.P4, a.P5 = "", "", "", "", ""
-	a.P6, a.P7, a.P8, a.P9, a.P10 = "", "", "", "", ""
-	a.P11, a.P12, a.P13, a.P14 = 0, 0, 0, 0
-	a.P15, a.P16, a.P17, a.P18 = "", "", "", ""
-	a.P19, a.P20 = false, ""
-}
-
-//请求公共上下行解析
-//P(n)说明具体说明参照wiki：http://wiki.baidu-shucheng.com/pages/viewpage.action?pageId=4915578
-type g struct {
-	//request __id 每次请求的唯一标识id
-	RequestID string
-	//用户信息，待添加..
-
-	//p系列公共上下行
-	P1, P2, P3, P4, P5, P6, P7, P8, P9, P10 string
-	P11, P12, P13, P14                      int
-	P15, P16, P17, P18                      string
-	P19                                     bool
-	P20                                     string
 }
 
 func getId() string {
