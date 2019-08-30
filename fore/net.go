@@ -11,10 +11,10 @@ import (
 )
 
 const (
-	envCountKey                  = "AR_V2_LISTEN_FDS"
-	envCountKeyPrefix            = envCountKey + "="
-	arcReactorChildProcess       = "ARC_REACTOR_CHILD_PROCESS"
-	arcReactorChildProcessPrefix = arcReactorChildProcess + "="
+	envCountKey                    = "ALTAR_LISTEN_FDS"
+	envCountKeyPrefix              = envCountKey + "="
+	altarReactorChildProcess       = "ALTAR_REACTOR_CHILD_PROCESS"
+	altarReactorChildProcessPrefix = altarReactorChildProcess + "="
 )
 
 var originalWD, _ = os.Getwd()
@@ -164,12 +164,12 @@ func startProcess(files []*os.File, envs []string) (int, error) {
 		env = append(env, envs...)
 	}
 	for _, v := range os.Environ() {
-		if !strings.HasPrefix(v, envCountKeyPrefix) && !strings.HasPrefix(v, arcReactorChildProcessPrefix) {
+		if !strings.HasPrefix(v, envCountKeyPrefix) && !strings.HasPrefix(v, altarReactorChildProcessPrefix) {
 			env = append(env, v)
 		}
 	}
 	env = append(env, fmt.Sprintf("%s%d", envCountKeyPrefix, len(files)))
-	env = append(env, fmt.Sprintf("%s%d", arcReactorChildProcessPrefix, 1))
+	env = append(env, fmt.Sprintf("%s%d", altarReactorChildProcessPrefix, 1))
 
 	allFiles := append([]*os.File{os.Stdin, os.Stdout, os.Stderr}, files...)
 	process, err := os.StartProcess(argv0, os.Args, &os.ProcAttr{

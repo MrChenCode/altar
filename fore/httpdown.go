@@ -223,9 +223,9 @@ func (s *server) manage() {
 			conns[c] = http.StateIdle
 
 			// if we're already stopping, close it
-			if stopDone != nil {
-				c.Close()
-			}
+			//if stopDone != nil {
+			//	c.Close()
+			//}
 		case c := <-s.closed:
 			stats.BumpSum(s.stats, "conn.closed", 1)
 			decConn(c)
@@ -245,11 +245,11 @@ func (s *server) manage() {
 			}
 
 			// close current idle connections right away
-			for c, cs := range conns {
-				if cs == http.StateIdle {
-					c.Close()
-				}
-			}
+			//for c, cs := range conns {
+			//	if cs == http.StateIdle {
+			//		c.Close()
+			//	}
+			//}
 
 			// continue the loop and wait for all the ConnState updates which will
 			// eventually close(stopDone) and return from this goroutine.
@@ -292,8 +292,7 @@ func (s *server) Stop() error {
 		stats.BumpSum(s.stats, "stop", 1)
 
 		// first disable keep-alive for new connections
-		s.server.SetKeepAlivesEnabled(false)
-
+		//s.server.SetKeepAlivesEnabled(false)
 		// then close the listener so new connections can't connect come thru
 		closeErr := s.listener.Close()
 		<-s.serveDone

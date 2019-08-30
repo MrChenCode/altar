@@ -9,6 +9,7 @@ import (
 	"altar/application/model"
 	"github.com/gin-gonic/gin"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -19,6 +20,9 @@ type Router struct {
 
 	//controller pool对象
 	pool sync.Pool
+
+	//restart是否处于restart状态
+	restartd int32
 }
 
 func (r *Router) Router(engine *gin.Engine) {
@@ -36,6 +40,9 @@ func (r *Router) handle(handler HandlerFunc) gin.HandlerFunc {
 		//初始化basicController
 		c.Reset(ginctx)
 
+		if atomic.LoadInt32(&r.restartd) == 1 {
+			c.Header("Connection", "close")
+		}
 		//执行具体方法
 		handler(c)
 
@@ -78,4 +85,8 @@ func NewRouter(ctx *context.Context) *Router {
 	}
 
 	return r
+}
+
+func (r *Router) Restart() {
+	atomic.StoreInt32(&r.restartd, 1)
 }

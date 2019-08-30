@@ -73,6 +73,7 @@ func init() {
 type altar struct {
 	conf   *config.Config
 	engine *gin.Engine
+	router *router.Router
 	log    *logger.Logger
 	logwf  *logger.Logger
 }
@@ -170,6 +171,7 @@ func (a *altar) Start() error {
 	}
 
 	r := router.NewRouter(ctx)
+	a.router = r
 
 	if a.conf.Debug == config.DebugOnline {
 		gin.SetMode(gin.ReleaseMode)
@@ -183,9 +185,7 @@ func (a *altar) Start() error {
 	gin.Recovery()
 
 	r.Router(e)
-
 	a.engine = e
-	//_ = e.Run(":8888")
 
 	return nil
 }
@@ -223,6 +223,7 @@ func (a *altar) RestartEnvs() []string {
 
 //重启的通知
 func (a *altar) Restart() error {
+	a.router.Restart()
 	if a.log != nil {
 		a.log.Infow("", "msg", "restart", "pid", os.Getgid(), "ppid", os.Getppid())
 		_ = a.log.Sync()

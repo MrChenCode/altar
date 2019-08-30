@@ -51,7 +51,7 @@ func run(service Service) error {
 		return err
 	}
 	//启动时，是否是子进程启动，如果不是，则直接启动一个新子进程
-	if os.Getenv(arcReactorChildProcess) == "" {
+	if os.Getenv(altarReactorChildProcess) == "" {
 		pid, err := startProcess(nil, nil)
 		if err != nil {
 			return err
