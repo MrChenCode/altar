@@ -1,7 +1,7 @@
 package context
 
 import (
-	"altar/logger"
+	"altar/application/logger"
 	"fmt"
 	"github.com/go-redis/redis"
 	"time"

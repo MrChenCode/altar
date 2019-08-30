@@ -21,26 +21,6 @@ type Router struct {
 	pool sync.Pool
 }
 
-func NewRouter(ctx *context.Context) *Router {
-	r := &Router{
-		ctx: ctx,
-	}
-	r.pool.New = func() interface{} {
-		rcx := &rctx.RequestContext{
-			Context: r.ctx,
-		}
-		lib := library.NewLibrary(rcx)
-		cx := &cctx.ControllerContext{
-			RequestContext: rcx,
-			Model:          model.NewModel(rcx, lib),
-			Library:        lib,
-		}
-		return cx
-	}
-
-	return r
-}
-
 func (r *Router) Router(engine *gin.Engine) {
 	book := &controller.Book{}
 	game := &controller.Game{}
@@ -80,4 +60,22 @@ func (r *Router) handle(handler HandlerFunc) gin.HandlerFunc {
 			c.WriteLogError(requestID, errkv...)
 		}
 	}
+}
+
+func NewRouter(ctx *context.Context) *Router {
+	r := &Router{
+		ctx: ctx,
+	}
+	r.pool.New = func() interface{} {
+		rcx := rctx.NewRequestContext(r.ctx)
+		lib := library.NewLibrary(rcx)
+		cx := &cctx.ControllerContext{
+			RequestContext: rcx,
+			Model:          model.NewModel(rcx, lib),
+			Library:        lib,
+		}
+		return cx
+	}
+
+	return r
 }

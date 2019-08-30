@@ -1,7 +1,7 @@
 package context
 
 import (
-	"altar/logger"
+	"altar/application/logger"
 	"context"
 	"database/sql"
 	"sync/atomic"

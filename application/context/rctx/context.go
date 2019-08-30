@@ -27,6 +27,15 @@ type RequestContext struct {
 	Log *log
 }
 
+func NewRequestContext(ctx *context.Context) *RequestContext {
+	rcx := &RequestContext{
+		Context: ctx,
+		G:       &g{},
+		Log:     &log{},
+	}
+	return rcx
+}
+
 //获取缓冲的日志数据(k-v)
 func (rcx *RequestContext) GetLog() ([]interface{}, []interface{}) {
 	return rcx.Log.infoKV, rcx.Log.errorKV
@@ -34,18 +43,8 @@ func (rcx *RequestContext) GetLog() ([]interface{}, []interface{}) {
 
 //初始化
 func (rcx *RequestContext) Reset(ginctx *gin.Context) {
-	if rcx.Log == nil {
-		rcx.Log = &log{}
-	} else {
-		rcx.Log.reset()
-	}
-
-	//初始化G公共上行
-	if rcx.G == nil {
-		rcx.G = &g{}
-	} else {
-		rcx.G.reset()
-	}
+	rcx.Log.reset()
+	rcx.G.reset()
 
 	//初始化__id
 	rcx.G.RequestID = ginctx.Query("__id")

@@ -1,7 +1,7 @@
 package library
 
 type Func struct {
-	*Library
+	*BasicLibrary
 }
 
 func (f *Func) GetGame() {

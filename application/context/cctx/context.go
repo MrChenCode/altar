@@ -18,10 +18,10 @@ type ControllerContext struct {
 	*gin.Context
 
 	//model
-	Model *model.Model
+	Model *model.BasicModel
 
 	//lib
-	Library *library.Library
+	Library *library.BasicLibrary
 }
 
 func (c *ControllerContext) Reset(ginctx *gin.Context) {

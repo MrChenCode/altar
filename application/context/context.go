@@ -2,7 +2,7 @@ package context
 
 import (
 	"altar/application/config"
-	"altar/logger"
+	"altar/application/logger"
 	"sync"
 )
 
@@ -18,8 +18,9 @@ type Context struct {
 	logwf   *logger.Logger
 }
 
-func NewController(c *config.Config, log, logwf *logger.Logger) *Context {
-	return &Context{Config: c, loginfo: log, logwf: logwf}
+func NewController(c *config.Config, log, logwf *logger.Logger) (*Context, error) {
+	ctx := &Context{Config: c, loginfo: log, logwf: logwf}
+	return ctx, ctx.init()
 }
 
 func (ctx *Context) WriteLogInfo(id string, kvs ...interface{}) {
@@ -35,7 +36,7 @@ func (ctx *Context) LogSync() {
 	_ = ctx.logwf.Sync()
 }
 
-func (ctx *Context) Init() error {
+func (ctx *Context) init() error {
 	if ctx.Config == nil {
 		panic("Invalid config")
 	}

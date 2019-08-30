@@ -1,2 +1,5 @@
 logs/*log*
 .idea
+altar
+altar.ini
+altar.pid

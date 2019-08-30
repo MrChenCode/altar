@@ -1,7 +1,7 @@
 package context
 
 import (
-	"altar/logger"
+	"altar/application/logger"
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"

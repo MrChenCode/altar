@@ -4,6 +4,8 @@ go 1.12
 
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
+	github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a
+	github.com/facebookgo/stats v0.0.0-20151006221625-1b76add642e4
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-ini/ini v1.46.0
 	github.com/go-redis/redis v6.15.2+incompatible

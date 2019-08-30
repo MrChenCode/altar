@@ -1,6 +1,8 @@
 package config
 
 import (
+	"altar/application/logger"
+	"altar/application/system"
 	"errors"
 	"fmt"
 	"github.com/go-ini/ini"
@@ -9,13 +11,42 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"syscall"
 	"time"
 )
 
+var (
+	RootPath    string
+	DebugOnline = "online"
+	DebugQA     = "qa"
+)
+
 type Config struct {
+	//运行模式, online/qa
+	Debug string
+
+	//http服务监听地址, ip:port(10.3.138.32:8888)
+	HttpServerAddr string
+
 	//日志路径
 	LogPath string
+
+	//日志文件名称
+	//wf日志会在末尾加上.wf
+	LogFileName string
+
+	//日志切割周期
+	//	0-每小时切割
+	//	1-每天切割
+	//	2-每周切割
+	//	3-每月切割
+	//	4-永不切割
+	LogCatTime logger.Cattime
+
+	//日志保存天数
+	LogRetainDay int
+
+	//pid
+	PidFile string
 
 	//是否启用redis
 	RedisEnable bool
@@ -81,8 +112,61 @@ type MongoServer struct {
 	IdleTimeout  time.Duration
 }
 
-func NewConfig(path string) (*Config, error) {
+//测试语法
+func SyntaxCheck(path string) error {
+	file, err := getDebugFile(path)
+	if err != nil {
+		return err
+	}
+	_, err = ini.Load(file)
+	return err
+}
+
+//获取具体的配置文件
+func getDebugFile(path string) (string, error) {
 	cfg, err := ini.Load(path)
+	if err != nil {
+		return "", err
+	}
+	se := cfg.Section("running")
+	runDebug := se.Key("running").String()
+	inifile := ""
+	switch runDebug {
+	case DebugQA:
+		inifile = se.Key("qa_ini").String()
+	case DebugOnline:
+		inifile = se.Key("online_ini").String()
+	default:
+		return "", fmt.Errorf("config: nnknown key running_debug(%s)", runDebug)
+	}
+	if inifile == "" {
+		return "", errors.New("config: no valid configuration file was found")
+	}
+	if filepath.IsAbs(inifile) {
+		return inifile, nil
+	}
+	files := []string{
+		inifile,
+		filepath.Join(RootPath, inifile),
+	}
+	for _, ff := range files {
+		fi, err := os.Stat(ff)
+		//如果存在，且不是目录，则使用这个
+		if err == nil {
+			if !fi.IsDir() {
+				return ff, nil
+			}
+		}
+	}
+	return filepath.Join(RootPath, inifile), nil
+}
+
+func NewConfig(path string) (*Config, error) {
+	inifile, err := getDebugFile(path)
+	if err != nil {
+		return nil, err
+	}
+	cfg, err := ini.Load(inifile)
 	if err != nil {
 		return nil, err
 	}
@@ -90,6 +174,23 @@ func NewConfig(path string) (*Config, error) {
 
 	//读取services配置
 	section := cfg.Section("services")
+
+	c.PidFile = section.Key("pid_file").String()
+	c.HttpServerAddr = section.Key("http_server_addr").String()
+	c.LogFileName = section.Key("log_filename").String()
+	cattime := section.Key("log_cat_time").String()
+	switch cattime {
+	case "hour":
+		c.LogCatTime = logger.CAT_HOUR
+	case "day":
+		c.LogCatTime = logger.CAT_DAY
+	case "week":
+		c.LogCatTime = logger.CAT_WEEK
+	case "method":
+		c.LogCatTime = logger.CAT_MONTH
+	}
+	c.LogRetainDay, _ = section.Key("log_retain_day").Int()
+
 	logpath := section.Key("log_path").String()
 	logpath, err = directoryPermissions(logpath)
 	if err != nil {
@@ -451,9 +552,9 @@ func directoryPermissions(dir string) (path string, err error) {
 		err = errors.New("config: invalid path")
 		return
 	}
-	//if !filepath.IsAbs(dir) && ROOT_PATH != "" {
-	//	dir = filepath.Join(ROOT_PATH, dir)
-	//}
+	if !filepath.IsAbs(dir) && RootPath != "" {
+		dir = filepath.Join(RootPath, dir)
+	}
 	path, err = filepath.Abs(dir)
 	if err != nil {
 		return
@@ -470,7 +571,7 @@ func directoryPermissions(dir string) (path string, err error) {
 		err = fmt.Errorf("config: path(%s) is not a directory", path)
 		return
 	}
-	if syscall.Access(path, syscall.O_RDWR) != nil {
+	if system.SyscallAccess(path, system.O_RDWR) != nil {
 		err = fmt.Errorf("config: path(%s) lack of directory permissions", path)
 		return
 	}

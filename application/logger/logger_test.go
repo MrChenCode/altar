@@ -55,7 +55,7 @@ func TestLogger(t *testing.T) {
 	})
 	require.Equal(t, nil, err)
 
-	assert.NotEqual(t, nil, lg.SugaredLogger)
+	assert.NotEqual(t, nil, SugaredLogger)
 	assert.NotEqual(t, nil, lg.jack)
 	assert.Equal(t, fname, lg.jack.Filename)
 	assert.Equal(t, 90, lg.jack.MaxAge)

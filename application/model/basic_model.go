@@ -7,17 +7,17 @@ import (
 	"altar/application/library"
 )
 
-type Model struct {
+type BasicModel struct {
 	*rctx.RequestContext
-	Library *library.Library
+	Library *library.BasicLibrary
 
 	Book *BookModel
 	Game *GameModel
 }
 
 //初始化model
-func NewModel(ctx *rctx.RequestContext, lib *library.Library) *Model {
-	m := &Model{RequestContext: ctx, Library: lib}
+func NewModel(ctx *rctx.RequestContext, lib *library.BasicLibrary) *BasicModel {
+	m := &BasicModel{RequestContext: ctx, Library: lib}
 
 	m.Book = &BookModel{m}
 	m.Game = &GameModel{m}

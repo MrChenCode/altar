@@ -1,7 +1,7 @@
 package model
 
 type GameModel struct {
-	*Model
+	*BasicModel
 }
 
 func (g *GameModel) GetGameInfo() string {
