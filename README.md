@@ -51,21 +51,77 @@ GOPROXY=https://goproxy.io go mod tidy
 ## 下载项目
 
 ```shell
-git clone https://gitlab.baidu-shucheng.com/panda/altar.git
-
-cd altar
-
-GOPROXY=https://goproxy.io go mod tidy
+> git clone https://gitlab.baidu-shucheng.com/panda/altar.git
+> 
+> cd altar
+> 
+> GOPROXY=https://goproxy.io go mod tidy
 ```
 
-## 运行项目
+## 配置文件
 
+首先拷贝一个altar_default.ini到altar.ini   
+针对当前的环境，设置altar.ini里面的running为qa或者online模式, 会针对不同的模式，加载不同的配置文件
+
+## 开发运行项目
+
+####运行参数说明
+
+./altar [-chtv] args
+* -c ini_path  手动设置配置文件路径
+* -h 显示帮助
+* -t 检测配置文件
+* -v 显示编译等信息
+* stop 关闭停止
+* restart 重启
+
+示例：  
+./appname -c /etc/altar.ini  
+./appname -h  
+./appname -t  
+./appname -v  
+./appname stop  
+./appname restart  
+
+####开发测试(qa)
+
+配置文件running设置为qa
 ```shell
-go run main.go
+//命令行模式
+> go run main.go
 ```
+也可以使用ide的run运行   
+命令行和ide run为阻塞模式，使用ctrl-c即可停止
 
-也可以下载监听自动重启的开发工具mds：https://gitlab.baidu-shucheng.com/gt/mds  
+开发模式下也可以下载监听自动重启的开发工具mds：https://gitlab.baidu-shucheng.com/gt/mds  
 具体操作方式请参照mds
+
+
+####正式环境(online)
+
+首先在Makefile中设置正式环境的项目名(APP_NAME = appname)  
+修改ini配置文件的running为online(必须)  
+然后编译运行：
+```shell
+> make
+> ./appname
+```
+正式环境使用子进程非阻塞启动，如需要重启或者关闭，可以使用以下方式：
+```shell
+//普通优雅关闭, 优雅关闭需要等待所有处理连接正常处理完成，可能存在延迟关闭
+//如果需要立即关闭，请使用kill -9 pid
+
+> kill pid
+//或者
+> ./appname stop
+
+//重启操作, 重启必须等待所有连接处理完成
+> kill -USR2 pid
+//或者
+> ./appname restart
+```
+针对http keep-alive的情况，停止或者重启时会对http请求添加header头 Connection: close   
+对于短时间内没有请求的keep-alive长连接，会最多等待60秒，超时后直接关闭
 
 ## END...
 结束...
