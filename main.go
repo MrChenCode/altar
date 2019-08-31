@@ -68,6 +68,10 @@ func init() {
 	if mds {
 		BuildType = "mds"
 	}
+
+	if BuildPath != "" {
+		config.RootPath = BuildPath
+	}
 }
 
 type altar struct {
@@ -86,6 +90,11 @@ func main() {
 	outFlag()
 
 	a := &altar{}
+
+	//如果是windows，把编译模式改为run
+	if runtime.GOOS == "windows" {
+		BuildType = "run"
+	}
 
 	switch BuildType {
 	case "make":
@@ -259,14 +268,14 @@ func (a *altar) GetPid() (int, error) {
 		return 0, err
 	}
 	if len(oldpid) == 0 {
-		return 0, errors.New("No PID found.")
+		return 0, errors.New("no pid found")
 	}
 	pid, err := strconv.Atoi(string(oldpid))
 	if err != nil {
 		return 0, err
 	}
 	if pid <= 0 {
-		return 0, errors.New("PID is invalid.")
+		return 0, errors.New("pid is invalid")
 	}
 	return pid, nil
 }
@@ -276,20 +285,21 @@ func getConfig(out bool) (*config.Config, error) {
 	//检测配置文件
 	file := iniPath()
 
-	//设置root path到config
-	//config.RootPath = BuildPath
+	if file == "" {
+		return nil, fmt.Errorf("altar: no valid configuration file was found, use -c to set the configuration file path")
+	}
 
 	err := config.SyntaxCheck(file)
 	if err != nil {
-		return nil, fmt.Errorf("Altar Error: the configuration file %s syntax is error, %s\n", file, err.Error())
+		return nil, fmt.Errorf("altar error: the configuration file %s syntax is error, %s\n", file, err.Error())
 	} else if out {
-		_, _ = fmt.Fprintf(os.Stdout, "Altar: the configuration file %s syntax is ok\n", file)
+		_, _ = fmt.Fprintf(os.Stdout, "altar: the configuration file %s syntax is ok\n", file)
 	}
 	conf, err := config.NewConfig(file)
 	if err != nil {
-		return nil, fmt.Errorf("Altar Error: configuration file %s test is error, %s\n", file, err.Error())
+		return nil, fmt.Errorf("altar error: configuration file %s test is error, %s\n", file, err.Error())
 	} else if out {
-		_, _ = fmt.Fprintf(os.Stdout, "Altar: configuration file %s test is successful\n", file)
+		_, _ = fmt.Fprintf(os.Stdout, "altar: configuration file %s test is successful\n", file)
 	}
 	return conf, nil
 }

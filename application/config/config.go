@@ -158,7 +158,7 @@ func getDebugFile(path string) (string, error) {
 			}
 		}
 	}
-	return filepath.Join(RootPath, inifile), nil
+	return "", fmt.Errorf("config: configuration file (%s) not exist", inifile)
 }
 
 func NewConfig(path string) (*Config, error) {

@@ -1,3 +1,5 @@
+// +build !windows
+
 package fore
 
 import (
@@ -189,7 +191,6 @@ func RunStop(pid int) error {
 
 //重启
 //pid 要重启的服务pid
-//envs 重启时，附带的环境变量，xxx=yyy
 func RunRestart(pid int) error {
 	if err := syscall.Kill(pid, syscall.SIGUSR2); err != nil {
 		return fmt.Errorf("fore to restart parent: %s", err)
