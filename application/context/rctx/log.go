@@ -12,8 +12,12 @@ type log struct {
 }
 
 func (l *log) reset() {
-	l.infoKV = nil
-	l.errorKV = nil
+	if l.infoKV != nil {
+		l.infoKV = l.infoKV[:0]
+	}
+	if l.errorKV != nil {
+		l.errorKV = l.errorKV[:0]
+	}
 }
 
 func (l *log) Info(kvs ...interface{}) {
