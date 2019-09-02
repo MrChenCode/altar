@@ -14,6 +14,10 @@ func (_ *Game) GameInfo(ctx *cctx.ControllerContext) {
 	ctx.Redis.Get("altar_redis_test")
 	ctx.JSON(200, gin.H{
 		"code": 0,
-		"msg":  ctx.Model.Game.GetGameInfo(),
+		"msg":  "",
+		"result": map[string]interface{}{
+			"gameid":   100,
+			"gamename": ctx.Model.Game.GetGameInfo(),
+		},
 	})
 }

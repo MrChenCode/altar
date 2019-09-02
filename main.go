@@ -191,7 +191,6 @@ func (a *altar) Start() error {
 
 	e := gin.New()
 	e.Use(router.Recovery(logwf))
-	gin.Recovery()
 
 	r.Router(e)
 	a.engine = e
