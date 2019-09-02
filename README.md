@@ -1,4 +1,4 @@
-# Altar 祭坛
+# Altar 祭坛 [![pipeline status](https://gitlab.baidu-shucheng.com/panda/altar/badges/master/pipeline.svg)](https://gitlab.baidu-shucheng.com/panda/altar/commits/master)
 
 altar祭坛是一个制造生产英雄的起点...
 

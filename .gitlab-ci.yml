@@ -1,0 +1,25 @@
+stages:
+  - install
+  - gotest
+  - build
+
+before_install:
+  stage: install
+  script:
+    - GOPROXY=https://goproxy.io go mod tidy
+  tags:
+    - go
+
+go_test_other:
+  stage: gotest
+  script:
+    - go test --race -cpu=1,2,4 -covermode=atomic -v .test/...
+  tags:
+    - go
+
+build-test:
+  stage: build
+  script:
+    - make
+  tags:
+    - go
