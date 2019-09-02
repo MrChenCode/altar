@@ -13,7 +13,7 @@ before_install:
 go_test_other:
   stage: gotest
   script:
-    - go test --race -cpu=1,2,4 -covermode=atomic -v .test/...
+    - go test --race -cpu=1,2,4 -covermode=atomic -v ./test/...
   tags:
     - go
 
