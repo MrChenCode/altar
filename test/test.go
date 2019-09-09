@@ -265,6 +265,7 @@ func NewHttpTest() (*httptest.Server, error) {
 	e := gin.New()
 	e.Use(router.Recovery(logwf))
 	r.Router(e)
+	e.Routes()
 
 	return httptest.NewServer(e), nil
 }

@@ -2,16 +2,21 @@ package library
 
 import "altar/application/context/rctx"
 
+type libraryContext struct {
+	ctx *rctx.RequestContext
+}
+
 type BasicLibrary struct {
-	*rctx.RequestContext
+	*libraryContext
 
 	Func *Func
 }
 
 func NewLibrary(ctx *rctx.RequestContext) *BasicLibrary {
-	l := &BasicLibrary{RequestContext: ctx}
+	libctx := &libraryContext{ctx: ctx}
+	l := &BasicLibrary{libraryContext: libctx}
 
-	l.Func = &Func{l}
+	l.Func = &Func{libctx}
 
 	return l
 }
