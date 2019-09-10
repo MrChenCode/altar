@@ -1,7 +1,7 @@
 package model
 
 type BookModel struct {
-	*modelContext
+	*BasicModel
 }
 
 func (b *BookModel) GetBookInfo() string {
