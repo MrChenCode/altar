@@ -28,9 +28,11 @@ type Router struct {
 func (r *Router) Router(engine *gin.Engine) {
 	book := &controller.Book{}
 	game := &controller.Game{}
+	topic := &controller.Topic{}
 
 	engine.GET("/bookinfo", r.handle(book.BookInfo))
 	engine.GET("/gameinfo", r.handle(game.GameInfo))
+	engine.GET("/topicinfo", r.handle(topic.GetTopicInfo))
 }
 
 func (r *Router) handle(handler HandlerFunc) gin.HandlerFunc {

@@ -18,7 +18,7 @@ type Context struct {
 	logwf   *logger.Logger
 }
 
-func NewController(c *config.Config, log, logwf *logger.Logger) (*Context, error) {
+func NewContext(c *config.Config, log, logwf *logger.Logger) (*Context, error) {
 	ctx := &Context{Config: c, loginfo: log, logwf: logwf}
 	return ctx, ctx.init()
 }

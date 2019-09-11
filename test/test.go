@@ -255,7 +255,7 @@ func NewHttpTest() (*httptest.Server, error) {
 	loginfo := logger.NewTestWriteNull()
 	logwf := logger.NewTestWriteNull()
 
-	ctx, err := context.NewController(c, loginfo, logwf)
+	ctx, err := context.NewContext(c, loginfo, logwf)
 	if err != nil {
 		return nil, err
 	}

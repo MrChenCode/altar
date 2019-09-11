@@ -174,7 +174,7 @@ func (a *altar) Start() error {
 	a.log = loginfo
 	a.logwf = logwf
 
-	ctx, err := context.NewController(a.conf, loginfo, logwf)
+	ctx, err := context.NewContext(a.conf, loginfo, logwf)
 	if err != nil {
 		return err
 	}
