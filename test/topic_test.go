@@ -7,8 +7,8 @@ func TestTopicInfo(t *testing.T) {
 		Path:   "/topicinfo",
 		Method: Get,
 		RespResult: []string{
-			"add_time", "desc", "image", "platform_type", "wxqq_title",
-			"similarity", "title", "type", "weibo_desc", "wxqq_desc",
+			"tid", "title", "desc", "type", "image", "icon", "platform_type",
+			"wxqq_title", "wxqq_desc", "weibo_desc", "add_time", "list",
 		},
 	})
 }

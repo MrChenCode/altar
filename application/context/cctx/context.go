@@ -8,6 +8,7 @@ import (
 	"altar/application/library"
 	"altar/application/model"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type ControllerContext struct {
@@ -30,4 +31,20 @@ func (c *ControllerContext) Reset(ginctx *gin.Context) {
 
 	//重置gin请求资源
 	c.Context = ginctx
+}
+
+func (c *ControllerContext) ResponseOK(v interface{}) {
+	c.JSON(http.StatusOK, gin.H{
+		"code":   0,
+		"msg":    "",
+		"result": v,
+	})
+}
+
+func (c *ControllerContext) ResponseERR(code int, msg string) {
+	c.JSON(http.StatusOK, gin.H{
+		"code":   code,
+		"msg":    msg,
+		"result": nil,
+	})
 }
