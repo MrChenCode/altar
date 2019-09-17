@@ -8,7 +8,11 @@ import (
 type Topic struct{}
 
 func (_ *Topic) GetTopicInfo(c *cctx.ControllerContext) {
-	tid := "5a0bdc104cecc186538b4567"
+	tid := c.Query("tid")
+	if tid == "" {
+		c.ResponseERR(10000, "Parameter TID is invalid!")
+		return
+	}
 	res, err := c.Model.Topic.GetTopicDetail(tid, 1)
 
 	if err != nil {

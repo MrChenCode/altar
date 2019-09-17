@@ -32,9 +32,6 @@ type TopicDetail struct {
 	List interface{} `json:"list"`
 }
 
-type TopicContent struct {
-}
-
 //获取自定义专题详情
 //tid 专题id，必须是有效的mongo的id
 //platformType 平台类型，1-app 2-H5 会返回本平台相似的专题
@@ -64,6 +61,10 @@ func (t *TopicModel) GetTopicDetail(tid string, platformType int) (*TopicDetail,
 	opt := options.FindOne().SetProjection(fields)
 	detail := &TopicDetail{}
 	if err := t.ctx.Mongo.FindOne("topic_subject", where, opt).Decode(detail); err != nil {
+		//没有查询到具体的mongo数据, 如果想要返回其他的错误，可以在这里指定
+		if err == mongo.ErrNoDocuments {
+			//return detail, nil
+		}
 		return nil, err
 	}
 

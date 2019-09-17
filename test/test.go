@@ -146,19 +146,20 @@ func RunTestResponseCode(t *testing.T, path string, method Method, body string, 
 func RunTestApi(t *testing.T, r *Request) interface{} {
 	r.init()
 
-	res, err := http.NewRequest(string(r.Method), server.URL+"/"+r.Path, bytes.NewBuffer(r.Body))
+	req, err := http.NewRequest(string(r.Method), server.URL+"/"+r.Path, bytes.NewBuffer(r.Body))
 	require.Nil(t, err)
-	res.Header = make(http.Header)
+
+	req.Header = make(http.Header)
 	switch r.RequestType {
 	case "", "urlencode":
-		res.Header.Add("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
+		req.Header.Add("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
 	case "json":
-		res.Header.Add("Content-type", "application/json;charset=utf-8")
+		req.Header.Add("Content-type", "application/json;charset=utf-8")
 	default:
 		require.Fail(t, "invalid request type")
 	}
 
-	resp, err := client.Do(res)
+	resp, err := client.Do(req)
 	require.Nil(t, err)
 	defer func() {
 		require.Nil(t, resp.Body.Close())
