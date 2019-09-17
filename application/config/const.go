@@ -15,4 +15,7 @@ const (
 
 	//audio音频
 	BookTypeAudio BookType = 3
+
+	//cdn域名前缀
+	CdnDomainRoute string = "https://img.xmkanshu.com/novel/"
 )

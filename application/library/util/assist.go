@@ -6,7 +6,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	"unsafe"
 )
 
 func Int(v interface{}) int {
@@ -55,7 +54,7 @@ func Float64(v interface{}) float64 {
 //判断一个interface是否为true
 //
 //nil--false
-//整型、浮点型、复数 为0--false
+//整型、浮点型、复数 为0/0.000--false
 //空字符串--false(剔除空格制表符等)
 //chan/func/map/ptr/pointer/interface/slice 非nil返回true
 //map/slice/array 非nil长度为0返回false
@@ -83,17 +82,24 @@ func Bool(v interface{}) bool {
 		return f.Complex() != 0
 	case reflect.String:
 		return strings.TrimSpace(f.String()) != ""
-	case reflect.Chan, reflect.Func, reflect.Map, reflect.Ptr,
-		reflect.UnsafePointer, reflect.Interface, reflect.Slice:
+	case reflect.Chan, reflect.Func, reflect.Map,
+		reflect.UnsafePointer, reflect.Slice:
 		x := f.IsNil()
 		if !x {
 			if kind == reflect.Map || kind == reflect.Slice {
 				return f.Len() != 0
 			}
 		}
-		return x
+		return !x
+	case reflect.Ptr, reflect.Interface:
+		if f.IsNil() {
+			return false
+		}
+		return Bool(f.Elem().Interface())
 	case reflect.Array:
 		return f.Len() != 0
+	case reflect.Struct:
+		return true
 	default:
 		return true
 	}
@@ -103,11 +109,10 @@ func Bool(v interface{}) bool {
 //如果start为正数>=0，则从头开始数，如果start为负数<0，则从尾部开始数, 如果超过s长度，返回空字符串
 //如果length > 0 则为截取的长度，如果为0，默认截取到末尾, 如果为负数返回空字符串，如果超过s长度，返回有效截取的字符串
 func Substr(s string, start, length int) string {
-	if s == "" || length < 0 {
-		return s
+	n := len(s)
+	if n == 0 || length < 0 {
+		return ""
 	}
-	b := *(*[]byte)(unsafe.Pointer(&s))
-	n := len(b)
 	var startIndex, endIndex int
 	if start >= 0 {
 		startIndex = start
@@ -118,7 +123,7 @@ func Substr(s string, start, length int) string {
 		return ""
 	}
 	if length > 0 {
-		endIndex = start + length
+		endIndex = startIndex + length
 		if endIndex > n {
 			endIndex = n
 		}
@@ -126,7 +131,7 @@ func Substr(s string, start, length int) string {
 		//length < 0 情况开始已经判断
 		endIndex = n
 	}
-	return string(b[startIndex:endIndex])
+	return string(s[startIndex:endIndex])
 }
 
 func GetBookType(bookid interface{}) config.BookType {
@@ -145,9 +150,12 @@ func GetBookType(bookid interface{}) config.BookType {
 
 func FbkImg(v interface{}) string {
 	s := TrimString(v)
+	if s == "" {
+		return ""
+	}
 	pre := Substr(s, 0, 7)
 	if pre == "https:/" || pre == "http://" {
 		return s
 	}
-	return "https://img.xmkanshu.com/novel/" + s
+	return config.CdnDomainRoute + s
 }

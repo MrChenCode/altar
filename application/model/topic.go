@@ -9,7 +9,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"sort"
 	"time"
 )
 
@@ -246,8 +245,7 @@ func (t *TopicModel) GetTopicDetail(tid string, platformType int) (*TopicDetail,
 				}
 			}
 		}
-		ssmsi := &util.SortSliceMapStringInterface{&content, "sort_num"}
-		sort.Sort(ssmsi)
+		util.SortSliceMapStringInterface(&content, "sort_num", util.OrderDesc)
 		ret["content"] = content
 		detailList = append(detailList, ret)
 	}
