@@ -1,4 +1,4 @@
-package library
+package util
 
 //用于针对[]map[string]interface{}类型的数据排序
 //实现sort包Interface接口

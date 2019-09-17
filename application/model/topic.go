@@ -2,7 +2,7 @@ package model
 
 import (
 	"altar/application/config"
-	"altar/application/library"
+	"altar/application/library/util"
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
@@ -92,7 +92,7 @@ func (t *TopicModel) GetTopicDetail(tid string, platformType int) (*TopicDetail,
 		ret["title"] = dv["title"]
 		ret["desc"] = dv["desc"]
 		ret["type"] = dv["type"]
-		ret["sort_num"] = library.Int(dv["sort_num"])
+		ret["sort_num"] = util.Int(dv["sort_num"])
 		ret["add_time"] = dv["add_time"]
 		if _, ok := dv["content"]; !ok {
 			continue
@@ -113,29 +113,29 @@ func (t *TopicModel) GetTopicDetail(tid string, platformType int) (*TopicDetail,
 				ret["buy"] = 1
 				ret["isfree"] = 0
 				if rec, ok := dv["show_rec"]; ok {
-					ret["show_rec"] = library.Int(rec)
+					ret["show_rec"] = util.Int(rec)
 				}
 				if buy, ok := dv["buy"]; ok {
-					ret["buy"] = library.Int(buy)
+					ret["buy"] = util.Int(buy)
 				}
 				if isfree, ok := dv["is_free"]; ok {
-					ret["isfree"] = library.Int(isfree)
+					ret["isfree"] = util.Int(isfree)
 				}
 				cont := map[string]interface{}{
-					"bookid":       library.Int(cv["bookid"]),
-					"bookname":     library.TrimString(cv["bookname"]),
-					"booktype":     library.GetBookType(cv["bookid"]),
-					"bookdesc":     library.TrimString(cv["bookdesc"]),
-					"authorname":   library.TrimString(cv["authorname"]),
-					"frontcover":   library.FbkImg(cv["frontcover_6"]),
-					"booksize":     library.Float64(cv["booksize"]),
+					"bookid":       util.Int(cv["bookid"]),
+					"bookname":     util.TrimString(cv["bookname"]),
+					"booktype":     util.GetBookType(cv["bookid"]),
+					"bookdesc":     util.TrimString(cv["bookdesc"]),
+					"authorname":   util.TrimString(cv["authorname"]),
+					"frontcover":   util.FbkImg(cv["frontcover_6"]),
+					"booksize":     util.Float64(cv["booksize"]),
 					"booktypename": cv["booktypename"],
-					"book_score":   (float64(int(library.Float64(cv["book_score"]) * 2 * 10))) / 10,
+					"book_score":   (float64(int(util.Float64(cv["book_score"]) * 2 * 10))) / 10,
 					"recom":        cv["recommend"],
-					"sort_num":     library.Int(cv["sort_num"]),
+					"sort_num":     util.Int(cv["sort_num"]),
 				}
 				if ret["type"] == "carda" || ret["type"] == "cardb" {
-					cont["chapterid"] = library.Int(cv["chapter_id"])
+					cont["chapterid"] = util.Int(cv["chapter_id"])
 				}
 				if bookstatus, ok := cv["bookstatus"]; ok {
 					cont["bookstatus"] = bookstatus
@@ -143,24 +143,24 @@ func (t *TopicModel) GetTopicDetail(tid string, platformType int) (*TopicDetail,
 				//如果是音频书籍，则把图片替换为原图（如果原图存在的话）
 				if cont["booktype"] == config.BookTypeAudio {
 					if f1000, ok := cv["frontcover_1000"]; ok {
-						cont["frontcover"] = library.FbkImg(f1000)
+						cont["frontcover"] = util.FbkImg(f1000)
 					}
 				}
 				content = append(content, cont)
 			case "video":
 				content = append(content, map[string]interface{}{
-					"video_type": library.TrimString(cv["video_type"]),
-					"video_url":  library.TrimString(cv["video_url"]),
-					"video_pic":  library.TrimString(cv["front_cover"]),
-					"recom":      library.TrimString(cv["video_recom"]),
-					"sort_num":   library.Int(cv["sort_num"]),
+					"video_type": util.TrimString(cv["video_type"]),
+					"video_url":  util.TrimString(cv["video_url"]),
+					"video_pic":  util.TrimString(cv["front_cover"]),
+					"recom":      util.TrimString(cv["video_recom"]),
+					"sort_num":   util.Int(cv["sort_num"]),
 				})
 			case "news":
 				content = append(content, map[string]interface{}{
-					"title":    library.TrimString(cv["title"]),
-					"content":  library.TrimString(cv["content"]),
-					"recom":    library.TrimString(cv["info_recom"]),
-					"sort_num": library.Int(cv["sort_num"]),
+					"title":    util.TrimString(cv["title"]),
+					"content":  util.TrimString(cv["content"]),
+					"recom":    util.TrimString(cv["info_recom"]),
+					"sort_num": util.Int(cv["sort_num"]),
 				})
 			case "coupon":
 				objID := ""
@@ -171,82 +171,82 @@ func (t *TopicModel) GetTopicDetail(tid string, platformType int) (*TopicDetail,
 					"coupon_id": fmt.Sprintf(
 						"topic_coupon_%v_%v_%v_%v",
 						objID, cv["coupon_num"], cv["coupon_day"], cv["index"]),
-					"coupon_name": library.TrimString(cv["coupon_name"]),
-					"coupon_num":  library.Int(cv["coupon_num"]),
-					"coupon_day":  library.Int(cv["coupon_day"]),
-					"start_time":  library.TrimString(cv["coupon_start_time"]),
-					"end_time":    library.TrimString(cv["coupon_end_time"]),
-					"sort_num":    library.Int(cv["sort_num"]),
+					"coupon_name": util.TrimString(cv["coupon_name"]),
+					"coupon_num":  util.Int(cv["coupon_num"]),
+					"coupon_day":  util.Int(cv["coupon_day"]),
+					"start_time":  util.TrimString(cv["coupon_start_time"]),
+					"end_time":    util.TrimString(cv["coupon_end_time"]),
+					"sort_num":    util.Int(cv["sort_num"]),
 				})
 			case "welfare_book":
 				objID := ""
 				if id, ok := dv["_id"].(primitive.ObjectID); ok {
 					objID = id.Hex()
 				}
-				ret["day"] = library.Int(dv["day"])
-				ret["start_time"] = library.TrimString(dv["start_time"])
-				ret["end_time"] = library.TrimString(dv["end_time"])
+				ret["day"] = util.Int(dv["day"])
+				ret["start_time"] = util.TrimString(dv["start_time"])
+				ret["end_time"] = util.TrimString(dv["end_time"])
 				ret["welfare_book_id"] = fmt.Sprintf("topic_welfare_book_%v_%v", objID, dv["day"])
 				ret["free_type"] = 1
 				if freetype, ok := dv["free_type"]; ok {
-					ret["free_type"] = library.Int(freetype)
+					ret["free_type"] = util.Int(freetype)
 				}
 				frontcover := cv["frontcover_6"]
-				booktype := library.GetBookType(cv["bookid"])
+				booktype := util.GetBookType(cv["bookid"])
 				if booktype == config.BookTypeAudio {
 					if f1000, ok := cv["frontcover_1000"]; ok {
 						frontcover = f1000
 					}
 				}
-				frontcover = library.FbkImg(frontcover)
+				frontcover = util.FbkImg(frontcover)
 				content = append(content, map[string]interface{}{
-					"bookid":       library.Int(cv["bookid"]),
-					"bookname":     library.TrimString(cv["bookname"]),
+					"bookid":       util.Int(cv["bookid"]),
+					"bookname":     util.TrimString(cv["bookname"]),
 					"booktype":     booktype,
-					"bookdesc":     library.TrimString(cv["bookdesc"]),
-					"authorname":   library.TrimString(cv["authorname"]),
+					"bookdesc":     util.TrimString(cv["bookdesc"]),
+					"authorname":   util.TrimString(cv["authorname"]),
 					"frontcover":   frontcover,
-					"booksize":     library.Float64(cv["booksize"]),
+					"booksize":     util.Float64(cv["booksize"]),
 					"booktypename": cv["booktypename"],
-					"book_score":   (float64(int(library.Float64(cv["book_score"]) * 2 * 10))) / 10,
-					"recom":        library.TrimString(cv["recommend"]),
-					"sort_num":     library.Int(cv["sort_num"]),
+					"book_score":   (float64(int(util.Float64(cv["book_score"]) * 2 * 10))) / 10,
+					"recom":        util.TrimString(cv["recommend"]),
+					"sort_num":     util.Int(cv["sort_num"]),
 				})
 			case "author":
 				content = append(content, map[string]interface{}{
-					"author_id":   library.Int(cv["author_id"]),
-					"author_name": library.TrimString(cv["author_name"]),
-					"author_desc": library.TrimString(cv["author_desc"]),
-					"author_pic":  library.TrimString(cv["author_pic"]),
-					"sort_num":    library.Int(cv["sort_num"]),
+					"author_id":   util.Int(cv["author_id"]),
+					"author_name": util.TrimString(cv["author_name"]),
+					"author_desc": util.TrimString(cv["author_desc"]),
+					"author_pic":  util.TrimString(cv["author_pic"]),
+					"sort_num":    util.Int(cv["sort_num"]),
 				})
 			case "actor":
 				content = append(content, map[string]interface{}{
-					"actor_title":    library.TrimString(cv["actor_title"]),
-					"actor_subtitle": library.TrimString(cv["actor_subtitle"]),
-					"actor_desc":     library.TrimString(cv["actor_desc"]),
-					"actor_pic":      library.TrimString(cv["actor_pic"]),
-					"sort_num":       library.Int(cv["sort_num"]),
+					"actor_title":    util.TrimString(cv["actor_title"]),
+					"actor_subtitle": util.TrimString(cv["actor_subtitle"]),
+					"actor_desc":     util.TrimString(cv["actor_desc"]),
+					"actor_pic":      util.TrimString(cv["actor_pic"]),
+					"sort_num":       util.Int(cv["sort_num"]),
 				})
 			case "text_href":
 				if cv["text"] != nil && cv["url"] != nil {
 					content = append(content, map[string]interface{}{
-						"text":     library.TrimString(cv["text"]),
-						"url":      library.TrimString(cv["url"]),
-						"sort_num": library.Int(cv["sort_num"]),
+						"text":     util.TrimString(cv["text"]),
+						"url":      util.TrimString(cv["url"]),
+						"sort_num": util.Int(cv["sort_num"]),
 					})
 				}
 			case "img_href":
 				if cv["img_url"] != nil && cv["url"] != nil {
 					content = append(content, map[string]interface{}{
-						"img":      library.TrimString(cv["img_url"]),
-						"url":      library.TrimString(cv["url"]),
-						"sort_num": library.Int(cv["sort_num"]),
+						"img":      util.TrimString(cv["img_url"]),
+						"url":      util.TrimString(cv["url"]),
+						"sort_num": util.Int(cv["sort_num"]),
 					})
 				}
 			}
 		}
-		ssmsi := &library.SortSliceMapStringInterface{&content, "sort_num"}
+		ssmsi := &util.SortSliceMapStringInterface{&content, "sort_num"}
 		sort.Sort(ssmsi)
 		ret["content"] = content
 		detailList = append(detailList, ret)
