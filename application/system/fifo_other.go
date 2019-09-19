@@ -10,10 +10,12 @@ import (
 )
 
 //fifo通信有名管道
-var PIPFile = filepath.Join(os.TempDir(), "altar.ipc")
-var PIPEOF = "EOF"
-var PIPBUF = "BUF"
-var PIPERR = "ERR"
+var (
+	PIPFile = filepath.Join(os.TempDir(), "altar.ipc")
+	PIPEOF  = "EOF"
+	PIPBUF  = "BUF"
+	PIPERR  = "ERR"
+)
 
 func PipNew() error {
 	return syscall.Mkfifo(PIPFile, 0666)
