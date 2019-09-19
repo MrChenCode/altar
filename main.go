@@ -5,6 +5,7 @@ import (
 	"altar/application/context"
 	"altar/application/logger"
 	"altar/application/router"
+	"altar/application/system"
 	"altar/fore"
 	"errors"
 	"flag"
@@ -38,6 +39,9 @@ var (
 	//打印info
 	version bool
 
+	//mds运行
+	mds bool
+
 	//以下参数由编译时指定
 	//编译时间
 	BuildTime string
@@ -56,7 +60,6 @@ var (
 )
 
 func init() {
-	var mds bool
 	flag.BoolVar(&help, "h", false, "帮助")
 	flag.StringVar(&inifile, "c", "./altar.ini", "设置`配置文件`路径")
 	flag.BoolVar(&version, "v", false, "显示详细编译信息")
@@ -64,10 +67,6 @@ func init() {
 	flag.BoolVar(&mds, "mds", false, "以mds运行")
 
 	flag.Usage = usageHelp
-
-	if mds {
-		BuildType = "mds"
-	}
 
 	if BuildPath != "" {
 		config.RootPath = BuildPath
@@ -85,6 +84,10 @@ type altar struct {
 func main() {
 	//解析命令行参数
 	flag.Parse()
+
+	if BuildType == "" && mds {
+		BuildType = "mds"
+	}
 
 	//处理部分参数输出指令
 	outFlag()
@@ -136,8 +139,44 @@ func (a *altar) Init() error {
 			cmd = strings.ToLower(strings.TrimSpace(cmd))
 			switch cmd {
 			case "restart":
+				_ = system.PipCloseNew()
 				if err := fore.RunRestart(pid); err != nil {
 					return err
+				}
+				pipChan := system.PipRead()
+				pipTimeout := 15 * time.Second
+				pipTimer := time.NewTimer(pipTimeout)
+			PIPFOR:
+				for {
+					select {
+					case bs := <-pipChan:
+						b := []byte(bs)
+						if len(b) < 3 {
+							a.Println("无效的PIPE管道信号"+bs, true)
+							continue PIPFOR
+						}
+						ts := string(b[:3])
+						switch ts {
+						case system.PIPBUF:
+							if len(b) < 4 {
+								a.Println("无效的PIPE管道信号"+bs, true)
+								continue PIPFOR
+							}
+							a.Println(strings.TrimSpace(string(b[3:])), false)
+						case system.PIPERR:
+							if len(b) < 4 {
+								a.Println("无效的PIPE管道信号"+bs, true)
+								continue PIPFOR
+							}
+							a.Println(strings.TrimSpace(string(b[3:])), true)
+						case system.PIPEOF:
+							break PIPFOR
+						}
+						pipTimer.Reset(pipTimeout)
+					case <-pipTimer.C:
+						a.Println("读取管道信号超时", true)
+						break PIPFOR
+					}
 				}
 				os.Exit(0)
 			case "stop":
@@ -150,6 +189,16 @@ func (a *altar) Init() error {
 		return fmt.Errorf("Altar Error: 无效的命令 %s\n", strings.Join(args, " "))
 	}
 	return nil
+}
+
+func (a *altar) Println(b string, err bool) {
+	var s string
+	if err {
+		s = fmt.Sprintf(" %c[%d;%d;%dmError: %s%c[0m", 0x1B, 0, 0, 31, b, 0x1B)
+	} else {
+		s = b
+	}
+	_, _ = fmt.Fprintln(os.Stdout, s)
 }
 
 //start启动
@@ -185,7 +234,12 @@ func (a *altar) Start() error {
 	if a.conf.Debug == config.DebugOnline {
 		gin.SetMode(gin.ReleaseMode)
 	} else {
-		gin.SetMode(gin.DebugMode)
+		switch BuildType {
+		case "make", "mds":
+			gin.SetMode(gin.ReleaseMode)
+		case "run":
+			gin.SetMode(gin.DebugMode)
+		}
 	}
 	gin.DisableConsoleColor()
 
@@ -194,6 +248,8 @@ func (a *altar) Start() error {
 
 	r.Router(e)
 	a.engine = e
+
+	system.PipWrite("初始化完成", system.PIPBUF)
 
 	return nil
 }
@@ -221,6 +277,8 @@ func (a *altar) RunSuccess() error {
 	if err := ioutil.WriteFile(a.conf.PidFile, []byte(pid), 0644); err != nil {
 		return err
 	}
+	system.PipWrite("启动成功...", system.PIPBUF)
+	system.PipWrite("", system.PIPEOF)
 	return nil
 }
 

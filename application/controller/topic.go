@@ -19,7 +19,6 @@ func (_ *Topic) GetTopicInfo(c *cctx.ControllerContext) {
 		c.ResponseERR(10000, err.Error())
 		return
 	}
-
 	c.JSON(200, gin.H{
 		"code":   0,
 		"msg":    "ok",

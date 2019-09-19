@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+//把v转换成int类型，如果转换失败，会返回0
 func Int(v interface{}) int {
 	n, err := strconv.Atoi(fmt.Sprint(v))
 	if err != nil {
@@ -16,6 +17,7 @@ func Int(v interface{}) int {
 	return n
 }
 
+//把v转换int64类型, 转换失败会返回0
 func Int64(v interface{}) int64 {
 	n, err := strconv.ParseInt(fmt.Sprint(v), 10, 64)
 	if err != nil {
@@ -24,10 +26,13 @@ func Int64(v interface{}) int64 {
 	return n
 }
 
+//返回v到string拷贝
 func String(v interface{}) string {
 	return fmt.Sprint(v)
 }
 
+//返回v到string的拷贝，但是会剔除前后的空白字符
+//包括\t、\n、\v、\f、\r、空格、删除符号、连续空格符(nbsp)
 func TrimString(v interface{}) string {
 	if v == nil {
 		return ""
@@ -35,6 +40,7 @@ func TrimString(v interface{}) string {
 	return strings.TrimSpace(fmt.Sprint(v))
 }
 
+//把v转换成float32，转换失败会返回0
 func Float32(v interface{}) float32 {
 	n, err := strconv.ParseFloat(String(v), 32)
 	if err != nil {
@@ -43,6 +49,7 @@ func Float32(v interface{}) float32 {
 	return float32(n)
 }
 
+//把v转换成float64，转换失败会返回0
 func Float64(v interface{}) float64 {
 	n, err := strconv.ParseFloat(String(v), 64)
 	if err != nil {
@@ -59,7 +66,6 @@ func Float64(v interface{}) float64 {
 //chan/func/map/ptr/pointer/interface/slice 非nil返回true
 //map/slice/array 非nil长度为0返回false
 //非指针struct返回true
-//其他返回true
 func Bool(v interface{}) bool {
 	if v == nil {
 		return false

@@ -142,6 +142,9 @@ func TestUtilBool(t *testing.T) {
 	var other boolOtherType
 	require.False(t, util.Bool(other))
 	require.False(t, util.Bool(&other))
+	other = "a"
+	require.True(t, util.Bool(other))
+	require.True(t, util.Bool(&other))
 }
 
 func TestUtilSubstr(t *testing.T) {

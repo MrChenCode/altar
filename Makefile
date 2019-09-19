@@ -19,7 +19,7 @@ LDFLAGS := -X 'main.BuildPath=$(BUILD_PATH)' \
 all: mod altar
 
 mod:
-	GOPROXY=https://goproxy.io go mod tidy
+	GOPROXY=https://goproxy.cn go mod tidy
 
 altar:
 	go build -o altar -ldflags "$(LDFLAGS)" *.go

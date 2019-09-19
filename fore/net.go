@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -155,6 +156,11 @@ func (n *Net) StartProcess(envs []string) (int, error) {
 
 func startProcess(files []*os.File, envs []string) (int, error) {
 	argv0, err := exec.LookPath(os.Args[0])
+	if err != nil {
+		return 0, err
+	}
+	//修改程序路径为绝对路径
+	os.Args[0], err = filepath.Abs(argv0)
 	if err != nil {
 		return 0, err
 	}
