@@ -36,7 +36,7 @@ func (c *ControllerContext) Reset(ginctx *gin.Context) {
 func (c *ControllerContext) ResponseOK(v interface{}) {
 	c.JSON(http.StatusOK, gin.H{
 		"code":   0,
-		"msg":    "",
+		"msg":    "ok",
 		"result": v,
 	})
 }

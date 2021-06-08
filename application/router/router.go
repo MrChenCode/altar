@@ -29,10 +29,14 @@ func (r *Router) Router(engine *gin.Engine) {
 	book := &controller.Book{}
 	game := &controller.Game{}
 	topic := &controller.Topic{}
+	cloudsshelf := &controller.Cloudsshelf{}
+	user := &controller.User{}
 
 	engine.GET("/bookinfo", r.handle(book.BookInfo))
 	engine.GET("/gameinfo", r.handle(game.GameInfo))
 	engine.GET("/topicinfo", r.handle(topic.GetTopicInfo))
+	engine.GET("/v1/cloudsshelf/booklist", r.handle(cloudsshelf.Getbooklist))
+	engine.GET("/user/login", r.handle(user.Login))
 }
 
 func (r *Router) handle(handler HandlerFunc) gin.HandlerFunc {
