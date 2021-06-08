@@ -15,6 +15,7 @@ type BasicModel struct {
 	Game  *GameModel
 	Topic *TopicModel
 	Cloudsshelf *CloudsshelfModel
+	User *UserModel
 }
 
 //初始化model
@@ -25,6 +26,7 @@ func NewModel(ctx *rctx.RequestContext, lib *library.BasicLibrary) *BasicModel {
 	m.Game = &GameModel{m}
 	m.Topic = &TopicModel{m}
 	m.Cloudsshelf = &CloudsshelfModel{m}
+	m.User = &UserModel{m}
 
 	return m
 }
