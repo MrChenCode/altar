@@ -3,3 +3,4 @@ logs/*log*
 altar
 altar.ini
 altar.pid
+ini/*.ini
