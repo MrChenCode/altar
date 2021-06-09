@@ -10,18 +10,10 @@ type User struct{}
 
 func (_ *User) Login(ctx *cctx.ControllerContext) {
 	userName := ctx.Query("user_name")
-	phone := ctx.Query("phone")
-	code, _ := strconv.Atoi(ctx.Query("code"))
-	status := VerifyMobileFormat(phone)
-	if status == false{
-		ctx.ResponseERR(1005, "手机号错误")
-		return
-	}
-	if code != 111 {
-		ctx.ResponseERR(1005, "验证码错误")
-		return
-	}
-	user, err := ctx.Model.User.Login(phone, userName)
+	password := ctx.Query("password")
+	//status := VerifyMobileFormat(phone)
+	status, _ := strconv.Atoi( ctx.Query("status"))
+	user, err := ctx.Model.User.Login(password, userName, status)
 	if err != nil {
 		ctx.ResponseERR(1000, err.Error())
 		return
