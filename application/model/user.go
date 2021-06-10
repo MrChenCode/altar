@@ -13,7 +13,7 @@ type UserModel struct {
 }
 type UserInfo struct {
 	UserName string `json:"user_name"`
-	UserId int `json:"user_id"`
+	UserId   int    `json:"user_id"`
 }
 
 func (u *UserModel) Login(password, name string, status int) (*UserInfo, error) {
@@ -25,12 +25,12 @@ func (u *UserModel) Login(password, name string, status int) (*UserInfo, error) 
 	password = fmt.Sprintf("%x", has)
 	if status == 1 {
 		//注册
-		insertSql := "INSERT INTO user (user_name, password, creat_time )VALUES( ?,?, ?)"
+		insertSql := "INSERT INTO user (user_name, password, creat_time )VALUES( ?,?,?)"
 		result, err := u.User.ctx.Mysql.Exec(insertSql, name, password, timeStr)
 		if err != nil {
 			return nil, errors.New("服务错误")
 		}
-		lastId,_ := result.LastInsertId()
+		lastId, _ := result.LastInsertId()
 		user.UserName = name
 		user.UserId = int(lastId)
 	} else {
@@ -45,5 +45,6 @@ func (u *UserModel) Login(password, name string, status int) (*UserInfo, error) 
 		user.UserName = result["user_name"]
 		user.UserId, _ = strconv.Atoi(result["id"])
 	}
+
 	return user, nil
 }
