@@ -39,6 +39,7 @@ func (r *Router) Router(engine *gin.Engine) {
 	engine.GET("/v1/cloudsshelf/booklist", r.handle(cloudsshelf.Getbooklist))
 	engine.GET("/user/login", r.handle(user.Login))
 	engine.GET("/", r.handle(index.Index))
+	engine.GET("/draw", r.handle(index.Draw))
 }
 
 func (r *Router) handle(handler HandlerFunc) gin.HandlerFunc {
