@@ -13,6 +13,10 @@ func (_ *User) Login(ctx *cctx.ControllerContext) {
 	password := ctx.Query("password")
 	//status := VerifyMobileFormat(phone)
 	status, _ := strconv.Atoi( ctx.Query("status"))
+	if userName == "" || password == ""{
+		ctx.ResponseERR(1000, "参数错误")
+		return
+	}
 	user, err := ctx.Model.User.Login(password, userName, status)
 	if err != nil {
 		ctx.ResponseERR(1000, err.Error())
