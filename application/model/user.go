@@ -23,10 +23,12 @@ func (u *UserModel) Login(password, name string, status int) (*UserInfo, error) 
 	md5Str := []byte(password)
 	has := md5.Sum(md5Str)
 	password = fmt.Sprintf("%x", has)
+	u.ctx.Log.Info("status", u.User.ctx.Mysql.Ping())
 	if status == 1 {
 		//注册
 		insertSql := "INSERT INTO user (user_name, password, creat_time )VALUES( ?,?,?)"
 		result, err := u.User.ctx.Mysql.Exec(insertSql, name, password, timeStr)
+
 		if err != nil {
 			return nil, errors.New("服务错误")
 		}
