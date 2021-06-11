@@ -2,7 +2,6 @@ package controller
 
 import (
 	"altar/application/context/cctx"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"math/rand"
 	"strconv"
@@ -26,8 +25,16 @@ func (_ *Index) Draw(ctx *cctx.ControllerContext) {
 		class = 0
 	}
 	name := getStudentName(class)
-	ctx.JSON(200, gin.H{"同学名字:": name})
+	subject := getSubjectNum()
+	ctx.JSON(200, gin.H{"同学名字": name, "题目序号": subject})
 }
+
+func getSubjectNum () int {
+	num := rand.Intn( 10)
+
+	return num
+}
+
 
 func getStudentName(i int) string {
 	names := [][]string{
@@ -216,7 +223,5 @@ func getStudentName(i int) string {
 	} else {
 		randNum = rand.Intn(60)
 	}
-	fmt.Println(randNum-1)
-	fmt.Println(names[i])
 	return names[i][randNum]
 }
