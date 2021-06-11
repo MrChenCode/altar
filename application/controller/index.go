@@ -30,9 +30,9 @@ func (_ *Index) Draw(ctx *cctx.ControllerContext) {
 }
 
 func getSubjectNum () int {
-	num := rand.Intn( 10)
+	num := rand.Intn( 9)
 
-	return num
+	return num + 1
 }
 
 
@@ -217,11 +217,11 @@ func getStudentName(i int) string {
 	}
 	var randNum int
 	if i == 0 {
-		randNum = rand.Intn(55)
-	} else if i == 1 {
 		randNum = rand.Intn(54)
+	} else if i == 1 {
+		randNum = rand.Intn(53)
 	} else {
-		randNum = rand.Intn(60)
+		randNum = rand.Intn(59)
 	}
 	return names[i][randNum]
 }
