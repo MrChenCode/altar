@@ -24,3 +24,17 @@ func (_ *Fish) GetFishList(ctx *cctx.ControllerContext) {
 	}
 	ctx.ResponseOK(info)
 }
+
+func ( _ *Fish) AddFishInfo (ctx *cctx.ControllerContext) {
+	userId := ctx.PostForm("user_id")
+	title := ctx.PostForm("title")
+	weight := ctx.PostForm("weight")
+	lenght := ctx.PostForm("lenght")
+	address := ctx.PostForm("address")
+	err := ctx.Model.Fish.UploadImgAndFishInfo(ctx.Context, title, weight, lenght, address, userId)
+	if err != nil {
+		ctx.ResponseERR(1000, err.Error())
+		return
+	}
+	ctx.ResponseOK(nil)
+}

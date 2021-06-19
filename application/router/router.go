@@ -42,6 +42,7 @@ func (r *Router) Router(engine *gin.Engine) {
 	engine.GET("/", r.handle(index.Index))
 	engine.GET("/draw", r.handle(index.Draw))
 	engine.GET("/fish/list", r.handle(fish.GetFishList))
+	engine.POST("/fish/add_fish", r.handle(fish.AddFishInfo))
 }
 
 func (r *Router) handle(handler HandlerFunc) gin.HandlerFunc {

@@ -2,7 +2,15 @@ package model
 
 import (
 	"errors"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"os"
+	"path"
+	"strings"
+	"time"
 )
+
+var UploadDir string = "/upload/img/"
 
 type FishModel struct {
 	*BasicModel
@@ -40,5 +48,37 @@ func (f *FishModel) GetFishList(pageId, pageSize, userId int) (map[string][]Fish
 		})
 	}
 	return m, 1006, nil
-
 }
+
+func (f *FishModel) UploadImgAndFishInfo(ctx *gin.Context, title, weight, lenght, address, userId string) error {
+	Img, err := ctx.FormFile("imgfile")
+	if err != nil {
+		return errors.New("上传文件有问题")
+	}
+	fileExt := strings.ToLower(path.Ext(Img.Filename))
+	if fileExt != ".png" && fileExt != ".jpg" && fileExt != ".gif" && fileExt != ".jpeg" {
+		return errors.New("上传失败!只允许png,jpg,gif,jpeg文件")
+	}
+	dirName, _ := os.Getwd()
+	fileName := f.library.Func.Md5(fmt.Sprintf("%s%s", Img.Filename, time.Now().String()))
+	fildDir := fmt.Sprintf("%s%s%d%s/", dirName, UploadDir, time.Now().Year(), time.Now().Month().String())
+	isExist := f.BasicModel.library.Func.ExistsDir(fildDir)
+	if !isExist {
+		err = os.MkdirAll(fildDir, os.ModePerm)
+		if err != nil {
+			return errors.New("创建文件失败")
+		}
+	}
+	filepath := fmt.Sprintf("%s%s%s", fildDir, fileName, ".png")
+	err = ctx.SaveUploadedFile(Img, filepath)
+	if err != nil {
+		return err
+	}
+	DBpath := fmt.Sprintf("%s%d%s/s%s", UploadDir, time.Now().Year(), time.Now().Month().String(), fileName, ".png")
+
+	inserSql := "inser"
+
+	f.ctx.Log.Info("file_name", filepath)
+	return nil
+}
+
