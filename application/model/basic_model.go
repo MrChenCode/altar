@@ -11,11 +11,12 @@ type BasicModel struct {
 	ctx     *rctx.RequestContext
 	library *library.BasicLibrary
 
-	Book  *BookModel
-	Game  *GameModel
-	Topic *TopicModel
+	Book        *BookModel
+	Game        *GameModel
+	Topic       *TopicModel
 	Cloudsshelf *CloudsshelfModel
-	User *UserModel
+	User        *UserModel
+	Fish        *FishModel
 }
 
 //初始化model
@@ -27,6 +28,7 @@ func NewModel(ctx *rctx.RequestContext, lib *library.BasicLibrary) *BasicModel {
 	m.Topic = &TopicModel{m}
 	m.Cloudsshelf = &CloudsshelfModel{m}
 	m.User = &UserModel{m}
+	m.Fish = &FishModel{m}
 
 	return m
 }

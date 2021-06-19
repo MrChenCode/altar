@@ -4,3 +4,4 @@ altar
 altar.ini
 altar.pid
 ini/*.ini
+.DS_Store

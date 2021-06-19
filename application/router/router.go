@@ -32,6 +32,7 @@ func (r *Router) Router(engine *gin.Engine) {
 	cloudsshelf := &controller.Cloudsshelf{}
 	user := &controller.User{}
 	index :=&controller.Index{}
+	fish := &controller.Fish{}
 
 	engine.GET("/bookinfo", r.handle(book.BookInfo))
 	engine.GET("/gameinfo", r.handle(game.GameInfo))
@@ -40,6 +41,7 @@ func (r *Router) Router(engine *gin.Engine) {
 	engine.GET("/user/login", r.handle(user.Login))
 	engine.GET("/", r.handle(index.Index))
 	engine.GET("/draw", r.handle(index.Draw))
+	engine.GET("/fish/list", r.handle(fish.GetFishList))
 }
 
 func (r *Router) handle(handler HandlerFunc) gin.HandlerFunc {
