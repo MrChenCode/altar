@@ -21,7 +21,7 @@ type FishList struct {
 	Address string `json:"address"`
 	Img     string `json:"img"`
 	Weight  string `json:"weight"`
-	Lenght  string `json:"lenght"`
+	Lenght  string `json:"length"`
 	Id      string `json:"id"`
 }
 
