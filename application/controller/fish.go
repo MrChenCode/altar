@@ -31,7 +31,7 @@ func ( _ *Fish) AddFishInfo (ctx *cctx.ControllerContext) {
 	weight := ctx.PostForm("weight")
 	length := ctx.PostForm("length")
 	address := ctx.PostForm("address")
-	if title == "" || userId == "" || weight == "" || lenght == "" {
+	if title == "" || userId == "" || weight == "" || length == "" {
 		ctx.ResponseERR(1003, "参数错误")
 		return
 	}
