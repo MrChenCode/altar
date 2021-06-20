@@ -50,7 +50,7 @@ func (f *FishModel) GetFishList(pageId, pageSize, userId int) (map[string][]Fish
 	return m, 1006, nil
 }
 
-func (f *FishModel) UploadImgAndFishInfo(ctx *gin.Context, title, weight, lenght, address, userId string) error {
+func (f *FishModel) UploadImgAndFishInfo(ctx *gin.Context, title, weight, length, address, userId string) error {
 	Img, err := ctx.FormFile("imgfile")
 	if err != nil {
 		return errors.New("上传文件有问题")
@@ -75,8 +75,8 @@ func (f *FishModel) UploadImgAndFishInfo(ctx *gin.Context, title, weight, lenght
 		return err
 	}
 	DBpath := fmt.Sprintf("%s%d%s/%s%s", UploadDir, time.Now().Year(), time.Now().Month().String(), fileName, ".png")
-	inserSql := "insert into fish (title, address,user_id,img,weight,lenght) values (?,?,?,?,?,?)"
-	_ ,err = f.ctx.Mysql.Exec(inserSql, title, address, userId, DBpath, weight,lenght)
+	inserSql := "insert into fish (title, address,user_id,img,weight,length) values (?,?,?,?,?,?)"
+	_, err = f.ctx.Mysql.Exec(inserSql, title, address, userId, DBpath, weight, length)
 	if err != nil {
 		f.ctx.Log.Error("error", err)
 		return err
@@ -84,4 +84,3 @@ func (f *FishModel) UploadImgAndFishInfo(ctx *gin.Context, title, weight, lenght
 
 	return nil
 }
-
