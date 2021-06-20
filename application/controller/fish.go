@@ -31,6 +31,10 @@ func ( _ *Fish) AddFishInfo (ctx *cctx.ControllerContext) {
 	weight := ctx.PostForm("weight")
 	lenght := ctx.PostForm("lenght")
 	address := ctx.PostForm("address")
+	if title == "" || userId == "" || weight == "" || lenght == "" {
+		ctx.ResponseERR(1003, "参数错误")
+		return
+	}
 	err := ctx.Model.Fish.UploadImgAndFishInfo(ctx.Context, title, weight, lenght, address, userId)
 	if err != nil {
 		ctx.ResponseERR(1000, err.Error())

@@ -74,11 +74,14 @@ func (f *FishModel) UploadImgAndFishInfo(ctx *gin.Context, title, weight, lenght
 	if err != nil {
 		return err
 	}
-	DBpath := fmt.Sprintf("%s%d%s/s%s", UploadDir, time.Now().Year(), time.Now().Month().String(), fileName, ".png")
+	DBpath := fmt.Sprintf("%s%d%s/%s%s", UploadDir, time.Now().Year(), time.Now().Month().String(), fileName, ".png")
+	inserSql := "insert into fish (title, address,user_id,img,weight,lenght) values (?,?,?,?,?,?)"
+	_ ,err = f.ctx.Mysql.Exec(inserSql, title, address, userId, DBpath, weight,lenght)
+	if err != nil {
+		f.ctx.Log.Error("error", err)
+		return err
+	}
 
-	inserSql := "inser"
-
-	f.ctx.Log.Info("file_name", filepath)
 	return nil
 }
 
