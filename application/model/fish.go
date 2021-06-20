@@ -26,7 +26,7 @@ type FishList struct {
 }
 
 func (f *FishModel) GetFishList(pageId, pageSize, userId int) (map[string][]FishList, int, error) {
-	sql := "select id, title, address, user_id, img, weight,lenght from fish where user_id = ? order by id desc limit ?, ? "
+	sql := "select id, title, address, user_id, img, weight,length from fish where user_id = ? order by id desc limit ?, ? "
 	res, err := f.ctx.Mysql.Query(sql, userId, f.library.Func.GetPage(pageId, pageSize), pageSize)
 	if err != nil {
 		return nil, 1000, errors.New("服务错误")
@@ -43,7 +43,7 @@ func (f *FishModel) GetFishList(pageId, pageSize, userId int) (map[string][]Fish
 			Address: v["address"],
 			Img:     v["img"],
 			Weight:  v["weight"],
-			Lenght:  v["lenght"],
+			Lenght:  v["length"],
 			Id:      v["id"],
 		})
 	}
