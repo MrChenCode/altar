@@ -34,6 +34,8 @@ func (r *Router) Router(engine *gin.Engine) {
 	index :=&controller.Index{}
 	fish := &controller.Fish{}
 
+	engine.LoadHTMLGlob("application/templates/index.tmpl")
+
 	engine.GET("/bookinfo", r.handle(book.BookInfo))
 	engine.GET("/gameinfo", r.handle(game.GameInfo))
 	engine.GET("/topicinfo", r.handle(topic.GetTopicInfo))

@@ -4,6 +4,7 @@ import (
 	"altar/application/context/cctx"
 	"github.com/gin-gonic/gin"
 	"math/rand"
+	"net/http"
 	"strconv"
 )
 
@@ -26,12 +27,18 @@ func (_ *Index) Draw(ctx *cctx.ControllerContext) {
 	}
 	name := getStudentName(class)
 	subject := getSubjectNum()
-	ctx.JSON(200, gin.H{"同学名字": name, "题目序号": subject})
+	ctx.Log.Info("中奖题号", subject, "中奖题号", subject)
+
+	ctx.HTML(http.StatusOK, "index.tmpl", gin.H{
+		"name": name,
+		"subject": subject,
+	})
+
+	//ctx.JSON(200, gin.H{"同学名字": name, "题目序号": subject})
 }
 
 func getSubjectNum () int {
 	num := rand.Intn( 9)
-
 	return num + 1
 }
 
