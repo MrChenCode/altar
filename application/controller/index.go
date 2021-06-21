@@ -27,7 +27,7 @@ func (_ *Index) Draw(ctx *cctx.ControllerContext) {
 	}
 	name := getStudentName(class)
 	subject := getSubjectNum()
-	ctx.Log.Info("中奖题号", subject, "中奖题号", subject)
+	ctx.Log.Info("中奖同学", name, "中奖题号", subject)
 
 	ctx.HTML(http.StatusOK, "index.tmpl", gin.H{
 		"name": name,
